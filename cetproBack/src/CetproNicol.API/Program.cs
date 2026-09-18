@@ -1,4 +1,7 @@
+using CetproNicol.Application.Interfaces;
+using CetproNicol.Application.Services;
 using CetproNicol.Infrastructure.Persistence;
+using CetproNicol.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,6 +15,13 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<CetproNicolDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+builder.Services.AddScoped<IPlanEstudioRepository, PlanEstudioRepository>();
+builder.Services.AddScoped<IMatriculaRepository, MatriculaRepository>();
+builder.Services.AddScoped<IPagoRepository, PagoRepository>();
+builder.Services.AddScoped<IMatriculaService, MatriculaService>();
 
 var app = builder.Build();
 
