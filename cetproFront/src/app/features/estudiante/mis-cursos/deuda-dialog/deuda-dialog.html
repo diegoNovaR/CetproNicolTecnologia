@@ -1,0 +1,37 @@
+<h2 mat-dialog-title>Deuda de la matrícula</h2>
+
+<mat-dialog-content class="dialog-content">
+  <div class="resumen">
+    <div>
+      <span class="label">Total deuda</span>
+      <span class="valor">S/ {{ deuda.totalDeuda }}</span>
+    </div>
+    <div>
+      <span class="label">Cuotas pendientes</span>
+      <span class="valor">{{ deuda.cuotasPendientes }}</span>
+    </div>
+  </div>
+
+  @if (deuda.detalleCuotas.length > 0) {
+    <table mat-table [dataSource]="deuda.detalleCuotas" class="full-width">
+      <ng-container matColumnDef="periodo">
+        <th mat-header-cell *matHeaderCellDef>Periodo</th>
+        <td mat-cell *matCellDef="let c">{{ c.periodo }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="monto">
+        <th mat-header-cell *matHeaderCellDef>Monto</th>
+        <td mat-cell *matCellDef="let c">S/ {{ c.monto }}</td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+      <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+    </table>
+  } @else {
+    <p>No tienes cuotas pendientes. ¡Estás al día!</p>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-raised-button color="primary" mat-dialog-close>Cerrar</button>
+</mat-dialog-actions>

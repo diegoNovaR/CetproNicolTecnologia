@@ -1,10 +1,13 @@
 using CetproNicol.Domain.Entities;
+using CetproNicol.Domain.Enums;
 
 namespace CetproNicol.Application.Interfaces;
 
 public interface IPagoRepository
 {
     Task<List<Pago>> GetAllAsync(CancellationToken cancellationToken = default);
+
+    Task<List<Pago>> GetAllConDetalleAsync(EstadoPago? estado, CancellationToken cancellationToken = default);
 
     Task<Pago?> GetByIdWithMatriculaAsync(Guid id, CancellationToken cancellationToken = default);
 

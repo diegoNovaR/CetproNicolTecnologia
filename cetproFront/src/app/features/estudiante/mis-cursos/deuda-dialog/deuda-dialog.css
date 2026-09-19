@@ -1,0 +1,21 @@
+.dialog-content {
+  min-width: 320px;
+}
+
+.resumen {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.resumen .label {
+  display: block;
+  color: #757575;
+  font-size: 0.85rem;
+}
+
+.resumen .valor {
+  display: block;
+  font-size: 1.4rem;
+  font-weight: 600;
+}

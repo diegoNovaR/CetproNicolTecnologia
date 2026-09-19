@@ -1,0 +1,10 @@
+.cursos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
+}
+
+.motivo {
+  color: #b00020;
+  font-size: 0.85rem;
+}

@@ -1,0 +1,16 @@
+.admin-container {
+  height: calc(100vh - 64px);
+}
+
+.admin-sidenav {
+  width: 220px;
+}
+
+.admin-content {
+  padding: 0;
+}
+
+a.activo {
+  background: rgba(63, 81, 181, 0.1);
+  font-weight: 500;
+}

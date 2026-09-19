@@ -1,0 +1,49 @@
+<div class="page-container">
+  <h1>Mis cursos</h1>
+
+  @if (cargando()) {
+    <mat-spinner diameter="40"></mat-spinner>
+  } @else if (matriculas().length === 0) {
+    <p class="empty-text">Todavía no tienes matrículas. Ve a "Solicitar matrícula" para inscribirte en un curso.</p>
+  } @else {
+    <div class="cursos-grid">
+      @for (m of matriculas(); track m.id) {
+        <mat-card class="curso-card">
+          <mat-card-header>
+            <mat-card-title>{{ m.cursoNombre }}</mat-card-title>
+            <mat-card-subtitle>{{ m.planTipo === 'carrera_completa' ? 'Carrera completa' : 'Módulo' }}</mat-card-subtitle>
+          </mat-card-header>
+
+          <mat-card-content>
+            <p>
+              Estado de matrícula:
+              <mat-chip [color]="m.estado === 'activa' ? 'primary' : 'accent'" selected>{{ m.estado }}</mat-chip>
+            </p>
+
+            @if (accesoDe(m.id); as acceso) {
+              <p>
+                Acceso al contenido:
+                <mat-chip [color]="acceso.tieneAcceso ? 'primary' : 'warn'" selected>
+                  {{ acceso.tieneAcceso ? 'Con acceso' : 'Sin acceso' }}
+                </mat-chip>
+                @if (!acceso.tieneAcceso && acceso.motivoRechazo) {
+                  <span class="motivo"> — {{ acceso.motivoRechazo }}</span>
+                }
+              </p>
+            }
+          </mat-card-content>
+
+          <mat-card-actions>
+            <button mat-button color="primary" (click)="verDeuda(m)">
+              <mat-icon>receipt_long</mat-icon> Ver deuda
+            </button>
+            <button mat-button color="accent" [disabled]="verificandoId() === m.id" (click)="verificarAcceso(m)">
+              <mat-icon>verified_user</mat-icon>
+              {{ verificandoId() === m.id ? 'Verificando...' : 'Verificar acceso' }}
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      }
+    </div>
+  }
+</div>

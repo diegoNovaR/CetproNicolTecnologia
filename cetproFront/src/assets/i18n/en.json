@@ -1,0 +1,88 @@
+{
+  "APP": {
+    "TITLE": "CetproNicol"
+  },
+  "NAV": {
+    "LOGIN": "Login",
+    "REGISTRO": "Register",
+    "DASHBOARD": "Dashboard",
+    "AREAS": "Areas",
+    "CURSOS": "Courses",
+    "PLANES": "Plans",
+    "MATRICULAS": "Enrollments",
+    "PAGOS": "Payments",
+    "MIS_CURSOS": "My courses",
+    "SOLICITAR_MATRICULA": "Request enrollment",
+    "CERRAR_SESION": "Log out"
+  },
+  "FORM": {
+    "NOMBRE": "First name",
+    "APELLIDO": "Last name",
+    "EMAIL": "Email",
+    "TELEFONO": "Phone",
+    "PASSWORD": "Password",
+    "DNI": "National ID",
+    "TELEFONO_CONTACTO": "Contact phone",
+    "AREA": "Area",
+    "CURSO": "Course",
+    "PLAN": "Plan"
+  },
+  "BUTTON": {
+    "GUARDAR": "Save",
+    "CANCELAR": "Cancel",
+    "APROBAR": "Approve",
+    "VER_DEUDA": "View balance",
+    "VERIFICAR_ACCESO": "Check access",
+    "SOLICITAR_MATRICULA": "Request enrollment",
+    "INGRESAR": "Sign in",
+    "REGISTRARME": "Sign up"
+  },
+  "STATUS": {
+    "PENDIENTE": "Pending",
+    "ACTIVA": "Active",
+    "COMPLETADA": "Completed",
+    "CANCELADA": "Cancelled",
+    "APROBADO": "Approved"
+  },
+  "AUTH": {
+    "LOGIN_SUBTITLE": "Sign in",
+    "REGISTRO_SUBTITLE": "Create a student account",
+    "NO_ACCOUNT": "Don't have an account? Sign up",
+    "HAS_ACCOUNT": "Already have an account? Sign in",
+    "EMAIL_REQUIRED": "Email is required.",
+    "EMAIL_INVALID": "Enter a valid email.",
+    "PASSWORD_REQUIRED": "Password is required.",
+    "PASSWORD_MIN_LENGTH": "Minimum 8 characters.",
+    "WELCOME": "Welcome",
+    "ACCOUNT_CREATED": "Account created successfully",
+    "LOGIN_ERROR": "Invalid credentials.",
+    "REGISTRO_ERROR": "Could not complete the registration.",
+    "CLOSE": "Close"
+  },
+  "SOLICITAR": {
+    "TITLE": "Request enrollment",
+    "SUBMIT": "Request enrollment",
+    "CREATED_TITLE": "Enrollment created",
+    "STATE_LABEL": "Status:",
+    "STATE_COLUMN": "Status",
+    "PAYMENTS_INTRO": "The following payments were generated (enrollment fee + monthly installments):",
+    "QUOTA": "Installment",
+    "PERIOD": "Period",
+    "AMOUNT": "Amount",
+    "MATRICULA_QUOTA": "Enrollment fee",
+    "SUCCESS": "Enrollment requested: {{count}} payments were generated.",
+    "ERROR": "Could not request the enrollment.",
+    "TIPO_CARRERA": "Full program",
+    "TIPO_MODULO": "Module",
+    "MONTHS": "months",
+    "MATRICULA_LABEL": "Enrollment fee",
+    "PENSION_LABEL": "tuition",
+    "DNI_ERROR": "The National ID must have 8 digits",
+    "TELEFONO_ERROR": "The phone must start with 9 and have 9 digits"
+  },
+  "HEADER": {
+    "LANGUAGE": "Language",
+    "SPANISH": "Español",
+    "ENGLISH": "English"
+  }
+}

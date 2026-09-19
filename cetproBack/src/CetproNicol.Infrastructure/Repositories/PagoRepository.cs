@@ -23,6 +23,22 @@ public class PagoRepository : IPagoRepository
             .Include(p => p.Matricula)
             .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
 
+    public Task<List<Pago>> GetAllConDetalleAsync(EstadoPago? estado, CancellationToken cancellationToken = default)
+    {
+        var query = _context.Pagos
+            .Include(p => p.Matricula)
+                .ThenInclude(m => m.Usuario)
+            .Include(p => p.Matricula)
+                .ThenInclude(m => m.PlanEstudio)
+                    .ThenInclude(p => p.Curso)
+            .AsQueryable();
+
+        if (estado.HasValue)
+            query = query.Where(p => p.Estado == estado.Value);
+
+        return query.OrderBy(p => p.Periodo).ThenBy(p => p.NumeroCuota).ToListAsync(cancellationToken);
+    }
+
     public Task<List<Pago>> GetPendientesByMatriculaIdAsync(Guid matriculaId, CancellationToken cancellationToken = default) =>
         _context.Pagos
             .Where(p => p.MatriculaId == matriculaId && p.Estado == EstadoPago.Pendiente)

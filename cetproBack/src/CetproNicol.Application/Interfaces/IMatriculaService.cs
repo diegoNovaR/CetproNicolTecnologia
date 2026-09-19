@@ -9,4 +9,8 @@ public interface IMatriculaService
     Task<PagoDto> AprobarPagoAsync(Guid pagoId, CancellationToken cancellationToken = default);
 
     Task<DeudaEstudianteDto> CalcularDeudaEstudianteAsync(Guid matriculaId, CancellationToken cancellationToken = default);
+
+    Task<List<MatriculaResumenDto>> GetMatriculasAsync(Guid? usuarioId, CancellationToken cancellationToken = default);
+
+    Task<List<PagoResumenDto>> GetPagosAsync(string? estado, CancellationToken cancellationToken = default);
 }

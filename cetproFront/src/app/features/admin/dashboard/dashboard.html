@@ -1,0 +1,22 @@
+<div class="page-container">
+  <h1>Dashboard</h1>
+
+  @if (cargando()) {
+    <mat-spinner diameter="40"></mat-spinner>
+  } @else if (resumen(); as r) {
+    <div class="grid">
+      <mat-card><mat-card-subtitle>Usuarios</mat-card-subtitle><mat-card-title>{{ r.totalUsuarios }}</mat-card-title></mat-card>
+      <mat-card><mat-card-subtitle>Estudiantes</mat-card-subtitle><mat-card-title>{{ r.totalEstudiantes }}</mat-card-title></mat-card>
+      <mat-card><mat-card-subtitle>Áreas activas</mat-card-subtitle><mat-card-title>{{ r.areasActivas }} / {{ r.totalAreas }}</mat-card-title></mat-card>
+      <mat-card><mat-card-subtitle>Cursos activos</mat-card-subtitle><mat-card-title>{{ r.cursosActivos }} / {{ r.totalCursos }}</mat-card-title></mat-card>
+      <mat-card><mat-card-subtitle>Planes de estudio</mat-card-subtitle><mat-card-title>{{ r.totalPlanesEstudio }}</mat-card-title></mat-card>
+      <mat-card><mat-card-subtitle>Matrículas activas</mat-card-subtitle><mat-card-title>{{ r.matriculasActivas }} / {{ r.totalMatriculas }}</mat-card-title></mat-card>
+      <mat-card><mat-card-subtitle>Matrículas pendientes</mat-card-subtitle><mat-card-title>{{ r.matriculasPendientes }}</mat-card-title></mat-card>
+      <mat-card><mat-card-subtitle>Pagos pendientes</mat-card-subtitle><mat-card-title>{{ r.pagosPendientes }}</mat-card-title></mat-card>
+      <mat-card><mat-card-subtitle>Pagos aprobados</mat-card-subtitle><mat-card-title>{{ r.pagosAprobados }}</mat-card-title></mat-card>
+      <mat-card><mat-card-subtitle>Monto pendiente</mat-card-subtitle><mat-card-title>S/ {{ r.montoPendiente | number:'1.2-2' }}</mat-card-title></mat-card>
+      <mat-card><mat-card-subtitle>Monto recaudado</mat-card-subtitle><mat-card-title>S/ {{ r.montoRecaudado | number:'1.2-2' }}</mat-card-title></mat-card>
+      <mat-card><mat-card-subtitle>Consultas nuevas</mat-card-subtitle><mat-card-title>{{ r.consultasNuevas }} / {{ r.totalConsultas }}</mat-card-title></mat-card>
+    </div>
+  }
+</div>

@@ -156,6 +156,60 @@ public class MatriculaService : IMatriculaService
         };
     }
 
+    public async Task<List<MatriculaResumenDto>> GetMatriculasAsync(Guid? usuarioId, CancellationToken cancellationToken = default)
+    {
+        var matriculas = await _matriculaRepository.GetAllConDetalleAsync(usuarioId, cancellationToken);
+        return matriculas.Select(MapToResumenDto).ToList();
+    }
+
+    public async Task<List<PagoResumenDto>> GetPagosAsync(string? estado, CancellationToken cancellationToken = default)
+    {
+        EstadoPago? estadoFiltro = estado switch
+        {
+            null => null,
+            "pendiente" => EstadoPago.Pendiente,
+            "aprobado" => EstadoPago.Aprobado,
+            _ => throw new BusinessRuleException("Estado debe ser 'pendiente' o 'aprobado'.")
+        };
+
+        var pagos = await _pagoRepository.GetAllConDetalleAsync(estadoFiltro, cancellationToken);
+        return pagos.Select(MapToResumenDto).ToList();
+    }
+
+    private static MatriculaResumenDto MapToResumenDto(Matricula matricula) => new()
+    {
+        Id = matricula.Id,
+        UsuarioId = matricula.UsuarioId,
+        UsuarioNombreCompleto = $"{matricula.Usuario.Nombre} {matricula.Usuario.Apellido}",
+        CursoId = matricula.PlanEstudio.CursoId,
+        CursoNombre = matricula.PlanEstudio.Curso.Nombre,
+        PlanEstudioId = matricula.PlanEstudioId,
+        PlanTipo = MapTipoPlanEstudio(matricula.PlanEstudio.Tipo),
+        Estado = MapEstadoMatricula(matricula.Estado),
+        FechaSolicitud = matricula.FechaSolicitud,
+        FechaAprobacion = matricula.FechaAprobacion
+    };
+
+    private static PagoResumenDto MapToResumenDto(Pago pago) => new()
+    {
+        Id = pago.Id,
+        MatriculaId = pago.MatriculaId,
+        UsuarioNombreCompleto = $"{pago.Matricula.Usuario.Nombre} {pago.Matricula.Usuario.Apellido}",
+        CursoNombre = pago.Matricula.PlanEstudio.Curso.Nombre,
+        NumeroCuota = pago.NumeroCuota,
+        Periodo = pago.Periodo,
+        Monto = pago.Monto,
+        Estado = MapEstadoPago(pago.Estado),
+        FechaPago = pago.FechaPago
+    };
+
+    private static string MapTipoPlanEstudio(TipoPlanEstudio tipo) => tipo switch
+    {
+        TipoPlanEstudio.CarreraCompleta => "carrera_completa",
+        TipoPlanEstudio.Modulo => "modulo",
+        _ => throw new ArgumentOutOfRangeException(nameof(tipo))
+    };
+
     private static MatriculaDto MapToDto(Matricula matricula, IEnumerable<Pago> pagos) => new()
     {
         Id = matricula.Id,

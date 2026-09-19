@@ -1,0 +1,14 @@
+.form-card {
+  max-width: 500px;
+  margin-bottom: 24px;
+}
+
+.form-cascada {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.resultado-card {
+  max-width: 700px;
+}

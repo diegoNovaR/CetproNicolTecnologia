@@ -1,0 +1,88 @@
+{
+  "APP": {
+    "TITLE": "CetproNicol"
+  },
+  "NAV": {
+    "LOGIN": "Iniciar sesión",
+    "REGISTRO": "Registro",
+    "DASHBOARD": "Dashboard",
+    "AREAS": "Áreas",
+    "CURSOS": "Cursos",
+    "PLANES": "Planes",
+    "MATRICULAS": "Matrículas",
+    "PAGOS": "Pagos",
+    "MIS_CURSOS": "Mis cursos",
+    "SOLICITAR_MATRICULA": "Solicitar matrícula",
+    "CERRAR_SESION": "Cerrar sesión"
+  },
+  "FORM": {
+    "NOMBRE": "Nombre",
+    "APELLIDO": "Apellido",
+    "EMAIL": "Email",
+    "TELEFONO": "Teléfono",
+    "PASSWORD": "Contraseña",
+    "DNI": "DNI",
+    "TELEFONO_CONTACTO": "Teléfono de contacto",
+    "AREA": "Área",
+    "CURSO": "Curso",
+    "PLAN": "Plan"
+  },
+  "BUTTON": {
+    "GUARDAR": "Guardar",
+    "CANCELAR": "Cancelar",
+    "APROBAR": "Aprobar",
+    "VER_DEUDA": "Ver deuda",
+    "VERIFICAR_ACCESO": "Verificar acceso",
+    "SOLICITAR_MATRICULA": "Solicitar matrícula",
+    "INGRESAR": "Ingresar",
+    "REGISTRARME": "Registrarme"
+  },
+  "STATUS": {
+    "PENDIENTE": "Pendiente",
+    "ACTIVA": "Activa",
+    "COMPLETADA": "Completada",
+    "CANCELADA": "Cancelada",
+    "APROBADO": "Aprobado"
+  },
+  "AUTH": {
+    "LOGIN_SUBTITLE": "Iniciar sesión",
+    "REGISTRO_SUBTITLE": "Crear cuenta de estudiante",
+    "NO_ACCOUNT": "¿No tienes cuenta? Regístrate",
+    "HAS_ACCOUNT": "¿Ya tienes cuenta? Inicia sesión",
+    "EMAIL_REQUIRED": "El email es obligatorio.",
+    "EMAIL_INVALID": "Ingresa un email válido.",
+    "PASSWORD_REQUIRED": "La contraseña es obligatoria.",
+    "PASSWORD_MIN_LENGTH": "Mínimo 8 caracteres.",
+    "WELCOME": "Bienvenido/a",
+    "ACCOUNT_CREATED": "Cuenta creada correctamente",
+    "LOGIN_ERROR": "Credenciales inválidas.",
+    "REGISTRO_ERROR": "No se pudo completar el registro.",
+    "CLOSE": "Cerrar"
+  },
+  "SOLICITAR": {
+    "TITLE": "Solicitar matrícula",
+    "SUBMIT": "Solicitar matrícula",
+    "CREATED_TITLE": "Matrícula creada",
+    "STATE_LABEL": "Estado:",
+    "STATE_COLUMN": "Estado",
+    "PAYMENTS_INTRO": "Se generaron los siguientes pagos (matrícula + cuotas mensuales):",
+    "QUOTA": "Cuota",
+    "PERIOD": "Periodo",
+    "AMOUNT": "Monto",
+    "MATRICULA_QUOTA": "Matrícula",
+    "SUCCESS": "Matrícula solicitada: se generaron {{count}} pagos.",
+    "ERROR": "No se pudo solicitar la matrícula.",
+    "TIPO_CARRERA": "Carrera completa",
+    "TIPO_MODULO": "Módulo",
+    "MONTHS": "meses",
+    "MATRICULA_LABEL": "Matrícula",
+    "PENSION_LABEL": "pensión",
+    "DNI_ERROR": "El DNI debe tener 8 dígitos",
+    "TELEFONO_ERROR": "El teléfono debe empezar con 9 y tener 9 dígitos"
+  },
+  "HEADER": {
+    "LANGUAGE": "Idioma",
+    "SPANISH": "Español",
+    "ENGLISH": "English"
+  }
+}

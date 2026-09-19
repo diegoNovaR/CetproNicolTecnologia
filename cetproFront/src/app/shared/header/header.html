@@ -1,0 +1,25 @@
+<mat-toolbar color="primary">
+  <span>{{ 'APP.TITLE' | translate }}</span>
+  <span class="spacer"></span>
+
+  @if (usuario(); as u) {
+    <span class="usuario-info">{{ u.nombre }} {{ u.apellido }}</span>
+    <mat-chip class="rol-chip">{{ u.rol }}</mat-chip>
+  }
+
+  <mat-form-field appearance="outline" class="idioma-field">
+    <mat-select [ngModel]="idiomaActual" (ngModelChange)="cambiarIdioma($event)" [attr.aria-label]="'HEADER.LANGUAGE' | translate">
+      <mat-option value="es">{{ 'HEADER.SPANISH' | translate }}</mat-option>
+      <mat-option value="en">{{ 'HEADER.ENGLISH' | translate }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <button
+    mat-icon-button
+    (click)="logout()"
+    [attr.aria-label]="'NAV.CERRAR_SESION' | translate"
+    [title]="'NAV.CERRAR_SESION' | translate"
+  >
+    <mat-icon>logout</mat-icon>
+  </button>
+</mat-toolbar>

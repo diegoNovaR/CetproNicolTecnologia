@@ -1,0 +1,18 @@
+<app-header></app-header>
+
+<mat-sidenav-container class="admin-container">
+  <mat-sidenav mode="side" opened class="admin-sidenav">
+    <mat-nav-list>
+      @for (opcion of opciones; track opcion.ruta) {
+        <a mat-list-item [routerLink]="opcion.ruta" routerLinkActive="activo">
+          <mat-icon matListItemIcon>{{ opcion.icono }}</mat-icon>
+          <span matListItemTitle>{{ opcion.label }}</span>
+        </a>
+      }
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <mat-sidenav-content class="admin-content">
+    <router-outlet></router-outlet>
+  </mat-sidenav-content>
+</mat-sidenav-container>

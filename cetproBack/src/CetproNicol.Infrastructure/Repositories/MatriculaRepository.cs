@@ -21,6 +21,20 @@ public class MatriculaRepository : IMatriculaRepository
     public Task<Matricula?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default) =>
         _context.Matriculas.FirstOrDefaultAsync(m => m.Id == id, cancellationToken);
 
+    public Task<List<Matricula>> GetAllConDetalleAsync(Guid? usuarioId, CancellationToken cancellationToken = default)
+    {
+        var query = _context.Matriculas
+            .Include(m => m.Usuario)
+            .Include(m => m.PlanEstudio)
+                .ThenInclude(p => p.Curso)
+            .AsQueryable();
+
+        if (usuarioId.HasValue)
+            query = query.Where(m => m.UsuarioId == usuarioId.Value);
+
+        return query.OrderByDescending(m => m.FechaSolicitud).ToListAsync(cancellationToken);
+    }
+
     public Task<bool> ExisteMatriculaActivaParaCursoAsync(Guid usuarioId, Guid cursoId, CancellationToken cancellationToken = default) =>
         _context.Matriculas
             .Include(m => m.PlanEstudio)

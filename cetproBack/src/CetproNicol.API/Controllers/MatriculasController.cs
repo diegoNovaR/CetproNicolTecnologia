@@ -76,6 +76,32 @@ public class MatriculasController : ControllerBase
         }
     }
 
+    /// <summary>Lista matrículas con datos de estudiante, curso y plan. Si se envía <paramref name="usuarioId"/>, filtra solo las de ese estudiante.</summary>
+    [HttpGet("/api/matriculas")]
+    [ProducesResponseType(typeof(List<MatriculaResumenDto>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetMatriculas([FromQuery] Guid? usuarioId, CancellationToken cancellationToken)
+    {
+        var matriculas = await _matriculaService.GetMatriculasAsync(usuarioId, cancellationToken);
+        return Ok(matriculas);
+    }
+
+    /// <summary>Lista pagos con datos de estudiante y curso. Si se envía <paramref name="estado"/> ("pendiente" o "aprobado"), filtra por ese estado.</summary>
+    [HttpGet("/api/pagos")]
+    [ProducesResponseType(typeof(List<PagoResumenDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> GetPagos([FromQuery] string? estado, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var pagos = await _matriculaService.GetPagosAsync(estado, cancellationToken);
+            return Ok(pagos);
+        }
+        catch (BusinessRuleException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
     /// <summary>Calcula la deuda pendiente de una matrícula: suma de cuotas no pagadas y su detalle por periodo.</summary>
     /// <param name="id">Id de la matrícula.</param>
     /// <response code="200">Resumen de deuda calculado.</response>

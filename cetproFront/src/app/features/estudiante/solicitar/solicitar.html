@@ -1,0 +1,110 @@
+<div class="page-container">
+  <h1>{{ 'SOLICITAR.TITLE' | translate }}</h1>
+
+  <mat-card class="form-card">
+    <mat-card-content>
+      <form [formGroup]="form" (ngSubmit)="solicitar()" class="form-cascada">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>{{ 'FORM.DNI' | translate }}</mat-label>
+          <input matInput formControlName="dni" maxlength="8" />
+          @if (form.get('dni')?.invalid && form.get('dni')?.touched) {
+            <mat-error>{{ 'SOLICITAR.DNI_ERROR' | translate }}</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>{{ 'FORM.TELEFONO_CONTACTO' | translate }}</mat-label>
+          <input matInput formControlName="telefonoContacto" maxlength="9" />
+          @if (form.get('telefonoContacto')?.invalid && form.get('telefonoContacto')?.touched) {
+            <mat-error>{{ 'SOLICITAR.TELEFONO_ERROR' | translate }}</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>{{ 'FORM.AREA' | translate }}</mat-label>
+          <mat-select formControlName="areaId">
+            @for (area of areas(); track area.id) {
+              <mat-option [value]="area.id">{{ area.nombre }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>{{ 'FORM.CURSO' | translate }}</mat-label>
+          <mat-select formControlName="cursoId">
+            @for (curso of cursos(); track curso.id) {
+              <mat-option [value]="curso.id">{{ curso.nombre }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>{{ 'FORM.PLAN' | translate }}</mat-label>
+          <mat-select formControlName="planEstudioId">
+            @for (plan of planes(); track plan.id) {
+              <mat-option [value]="plan.id">
+                {{ (plan.tipo === 'carrera_completa' ? 'SOLICITAR.TIPO_CARRERA' : 'SOLICITAR.TIPO_MODULO') | translate }}
+                — {{ plan.duracionMeses }} {{ 'SOLICITAR.MONTHS' | translate }}
+                — {{ 'SOLICITAR.MATRICULA_LABEL' | translate }} S/ {{ plan.precioMatricula }},
+                {{ 'SOLICITAR.PENSION_LABEL' | translate }} S/ {{ plan.pensionMensual }}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <button mat-raised-button color="primary" type="submit" [disabled]="enviando() || form.invalid">
+          @if (enviando()) {
+            <mat-spinner diameter="20"></mat-spinner>
+          } @else {
+            {{ 'SOLICITAR.SUBMIT' | translate }}
+          }
+        </button>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  @if (matriculaCreada(); as matricula) {
+    <mat-card class="resultado-card">
+      <mat-card-header>
+        <mat-card-title>{{ 'SOLICITAR.CREATED_TITLE' | translate }}</mat-card-title>
+        <mat-card-subtitle>
+          {{ 'SOLICITAR.STATE_LABEL' | translate }}
+          <mat-chip color="accent" selected>{{ ('STATUS.' + matricula.estado.toUpperCase()) | translate }}</mat-chip>
+        </mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <p>{{ 'SOLICITAR.PAYMENTS_INTRO' | translate }}</p>
+
+        <table mat-table [dataSource]="matricula.pagos" class="full-width">
+          <ng-container matColumnDef="numeroCuota">
+            <th mat-header-cell *matHeaderCellDef>{{ 'SOLICITAR.QUOTA' | translate }}</th>
+            <td mat-cell *matCellDef="let p">
+              {{ p.numeroCuota === 0 ? ('SOLICITAR.MATRICULA_QUOTA' | translate) : (('SOLICITAR.QUOTA' | translate) + ' ' + p.numeroCuota) }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="periodo">
+            <th mat-header-cell *matHeaderCellDef>{{ 'SOLICITAR.PERIOD' | translate }}</th>
+            <td mat-cell *matCellDef="let p">{{ p.periodo }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="monto">
+            <th mat-header-cell *matHeaderCellDef>{{ 'SOLICITAR.AMOUNT' | translate }}</th>
+            <td mat-cell *matCellDef="let p">S/ {{ p.monto }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="estado">
+            <th mat-header-cell *matHeaderCellDef>{{ 'SOLICITAR.STATE_COLUMN' | translate }}</th>
+            <td mat-cell *matCellDef="let p">
+              <mat-chip color="accent" selected>{{ ('STATUS.' + p.estado.toUpperCase()) | translate }}</mat-chip>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="columnasPagos"></tr>
+          <tr mat-row *matRowDef="let row; columns: columnasPagos;"></tr>
+        </table>
+      </mat-card-content>
+    </mat-card>
+  }
+</div>

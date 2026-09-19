@@ -1,0 +1,81 @@
+<div class="page-container">
+  <div class="page-header">
+    <h1>Pagos</h1>
+    <div class="page-header">
+      <mat-form-field appearance="outline" class="filtro-field">
+        <mat-label>Estado</mat-label>
+        <mat-select [ngModel]="filtroEstado()" (ngModelChange)="onFiltroChange($event)">
+          <mat-option value="">Todos</mat-option>
+          <mat-option value="pendiente">Pendientes</mat-option>
+          <mat-option value="aprobado">Aprobados</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <button mat-icon-button (click)="cargar()" title="Refrescar">
+        <mat-icon>refresh</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  @if (cargando()) {
+    <mat-spinner diameter="40"></mat-spinner>
+  } @else {
+    <table mat-table [dataSource]="pagos()" class="full-width mat-elevation-z2">
+      <ng-container matColumnDef="estudiante">
+        <th mat-header-cell *matHeaderCellDef>Estudiante</th>
+        <td mat-cell *matCellDef="let p">{{ p.usuarioNombreCompleto }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="curso">
+        <th mat-header-cell *matHeaderCellDef>Curso</th>
+        <td mat-cell *matCellDef="let p">{{ p.cursoNombre }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="cuota">
+        <th mat-header-cell *matHeaderCellDef>Cuota</th>
+        <td mat-cell *matCellDef="let p">{{ p.numeroCuota === 0 ? 'Matrícula' : 'Cuota ' + p.numeroCuota }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="periodo">
+        <th mat-header-cell *matHeaderCellDef>Periodo</th>
+        <td mat-cell *matCellDef="let p">{{ p.periodo }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="monto">
+        <th mat-header-cell *matHeaderCellDef>Monto</th>
+        <td mat-cell *matCellDef="let p">S/ {{ p.monto }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="estado">
+        <th mat-header-cell *matHeaderCellDef>Estado</th>
+        <td mat-cell *matCellDef="let p">
+          <mat-chip [color]="p.estado === 'aprobado' ? 'primary' : 'accent'" selected>{{ p.estado }}</mat-chip>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef>Acciones</th>
+        <td mat-cell *matCellDef="let p">
+          @if (p.estado === 'pendiente') {
+            <button mat-raised-button color="primary" [disabled]="aprobandoId() === p.id" (click)="aprobar(p)">
+              @if (aprobandoId() === p.id) {
+                Aprobando...
+              } @else {
+                Aprobar
+              }
+            </button>
+          } @else {
+            <mat-icon color="primary" title="Ya aprobado">check_circle</mat-icon>
+          }
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+      <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+    </table>
+
+    @if (pagos().length === 0) {
+      <p class="empty-text">No hay pagos para mostrar con este filtro.</p>
+    }
+  }
+</div>
