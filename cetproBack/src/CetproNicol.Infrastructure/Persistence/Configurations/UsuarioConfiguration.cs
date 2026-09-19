@@ -31,5 +31,18 @@ public class UsuarioConfiguration : IEntityTypeConfiguration<Usuario>
             .WithOne(m => m.Usuario)
             .HasForeignKey(m => m.UsuarioId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        // Contraseña semilla: "Admin123!" (cambiarla tras el primer login).
+        builder.HasData(new Usuario
+        {
+            Id = Guid.Parse("00000000-0000-0000-0000-000000000001"),
+            Nombre = "Admin",
+            Apellido = "CetproNicol",
+            Email = "admin@cetpronicol.com",
+            Telefono = null,
+            PasswordHash = "$2a$11$h0/WqTJnQFJNVvDj9ofT5eQt4JSwlI2ZG1tm2MtcUOU.ghOpnNOeK",
+            Rol = RolUsuario.Admin,
+            FechaRegistro = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+        });
     }
 }

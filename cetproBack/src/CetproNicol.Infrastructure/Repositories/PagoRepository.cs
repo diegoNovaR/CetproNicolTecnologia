@@ -15,10 +15,19 @@ public class PagoRepository : IPagoRepository
         _context = context;
     }
 
+    public Task<List<Pago>> GetAllAsync(CancellationToken cancellationToken = default) =>
+        _context.Pagos.ToListAsync(cancellationToken);
+
     public Task<Pago?> GetByIdWithMatriculaAsync(Guid id, CancellationToken cancellationToken = default) =>
         _context.Pagos
             .Include(p => p.Matricula)
             .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
+
+    public Task<List<Pago>> GetPendientesByMatriculaIdAsync(Guid matriculaId, CancellationToken cancellationToken = default) =>
+        _context.Pagos
+            .Where(p => p.MatriculaId == matriculaId && p.Estado == EstadoPago.Pendiente)
+            .OrderBy(p => p.NumeroCuota)
+            .ToListAsync(cancellationToken);
 
     public async Task AddRangeAsync(IEnumerable<Pago> pagos, CancellationToken cancellationToken = default) =>
         await _context.Pagos.AddRangeAsync(pagos, cancellationToken);

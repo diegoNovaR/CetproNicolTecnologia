@@ -15,6 +15,9 @@ public class MatriculaRepository : IMatriculaRepository
         _context = context;
     }
 
+    public Task<List<Matricula>> GetAllAsync(CancellationToken cancellationToken = default) =>
+        _context.Matriculas.ToListAsync(cancellationToken);
+
     public Task<Matricula?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default) =>
         _context.Matriculas.FirstOrDefaultAsync(m => m.Id == id, cancellationToken);
 
@@ -24,6 +27,20 @@ public class MatriculaRepository : IMatriculaRepository
             .AnyAsync(m => m.UsuarioId == usuarioId
                 && m.PlanEstudio.CursoId == cursoId
                 && (m.Estado == EstadoMatricula.Pendiente || m.Estado == EstadoMatricula.Activa),
+                cancellationToken);
+
+    public Task<bool> ExisteMatriculaParaCursoAsync(Guid usuarioId, Guid cursoId, CancellationToken cancellationToken = default) =>
+        _context.Matriculas
+            .Include(m => m.PlanEstudio)
+            .AnyAsync(m => m.UsuarioId == usuarioId && m.PlanEstudio.CursoId == cursoId, cancellationToken);
+
+    public Task<Matricula?> GetActivaConPagosPorCursoAsync(Guid usuarioId, Guid cursoId, CancellationToken cancellationToken = default) =>
+        _context.Matriculas
+            .Include(m => m.PlanEstudio)
+            .Include(m => m.Pagos)
+            .FirstOrDefaultAsync(m => m.UsuarioId == usuarioId
+                && m.PlanEstudio.CursoId == cursoId
+                && m.Estado == EstadoMatricula.Activa,
                 cancellationToken);
 
     public async Task AddAsync(Matricula matricula, CancellationToken cancellationToken = default) =>

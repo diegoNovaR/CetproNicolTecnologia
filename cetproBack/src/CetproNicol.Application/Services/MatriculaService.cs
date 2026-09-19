@@ -138,6 +138,24 @@ public class MatriculaService : IMatriculaService
         }
     }
 
+    public async Task<DeudaEstudianteDto> CalcularDeudaEstudianteAsync(Guid matriculaId, CancellationToken cancellationToken = default)
+    {
+        _ = await _matriculaRepository.GetByIdAsync(matriculaId, cancellationToken)
+            ?? throw new NotFoundException("La matrícula no existe.");
+
+        var pagosPendientes = await _pagoRepository.GetPendientesByMatriculaIdAsync(matriculaId, cancellationToken);
+
+        return new DeudaEstudianteDto
+        {
+            MatriculaId = matriculaId,
+            TotalDeuda = pagosPendientes.Sum(p => p.Monto),
+            CuotasPendientes = pagosPendientes.Count,
+            DetalleCuotas = pagosPendientes
+                .Select(p => new CuotaPendienteDto { Periodo = p.Periodo, Monto = p.Monto })
+                .ToList()
+        };
+    }
+
     private static MatriculaDto MapToDto(Matricula matricula, IEnumerable<Pago> pagos) => new()
     {
         Id = matricula.Id,
