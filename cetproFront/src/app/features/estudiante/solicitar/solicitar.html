@@ -12,6 +12,42 @@
           }
         </mat-form-field>
 
+        @if (verificacionEstado(); as estado) {
+          @if (estado !== 'idle') {
+            <div
+              class="reniec-status"
+              [class.reniec-ok]="estado === 'verificado'"
+              [class.reniec-warn]="estado === 'no-encontrado'"
+            >
+              @if (estado === 'buscando') {
+                <mat-spinner diameter="16"></mat-spinner>
+                <span>{{ 'SOLICITAR.RENIEC_BUSCANDO' | translate }}</span>
+              }
+              @if (estado === 'verificado' && datosReniec(); as d) {
+                <mat-icon class="reniec-icon">check_circle</mat-icon>
+                <span>
+                  {{ 'SOLICITAR.RENIEC_VERIFICADO' | translate }}
+                  {{ d.nombres }} {{ d.apellidoPaterno }} {{ d.apellidoMaterno }}
+                </span>
+              }
+              @if (estado === 'no-encontrado') {
+                <mat-icon class="reniec-icon">info</mat-icon>
+                <span>{{ 'SOLICITAR.RENIEC_NO_ENCONTRADO' | translate }}</span>
+              }
+            </div>
+          }
+        }
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>{{ 'FORM.NOMBRE' | translate }}</mat-label>
+          <input matInput formControlName="nombre" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>{{ 'FORM.APELLIDO' | translate }}</mat-label>
+          <input matInput formControlName="apellido" />
+        </mat-form-field>
+
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>{{ 'FORM.TELEFONO_CONTACTO' | translate }}</mat-label>
           <input matInput formControlName="telefonoContacto" maxlength="9" />

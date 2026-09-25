@@ -78,7 +78,10 @@
     "MATRICULA_LABEL": "Matrícula",
     "PENSION_LABEL": "pensión",
     "DNI_ERROR": "El DNI debe tener 8 dígitos",
-    "TELEFONO_ERROR": "El teléfono debe empezar con 9 y tener 9 dígitos"
+    "TELEFONO_ERROR": "El teléfono debe empezar con 9 y tener 9 dígitos",
+    "RENIEC_BUSCANDO": "Verificando DNI...",
+    "RENIEC_VERIFICADO": "Verificado:",
+    "RENIEC_NO_ENCONTRADO": "No pudimos verificar el DNI, completa tus datos manualmente"
   },
   "HEADER": {
     "LANGUAGE": "Idioma",

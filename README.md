@@ -39,3 +39,14 @@ Usuario admin semilla: `admin@cetpronicol.com` / `Admin123!`. También puedes re
 - Selector de idioma: `shared/header/header.ts`.
 - Textos traducidos: `Header`, `Login`, `Registro` y `SolicitarComponent` (el resto de pantallas admin quedó en español fijo, fuera del alcance pedido).
 
+## Consumo de la API RENIEC desde el frontend
+
+La verificación de DNI en `SolicitarComponent` llama directo a la API de RENIEC **desde Angular**, sin pasar por el backend .NET.
+
+- **Dónde:** `ReniecService.buscarPorDni()` (`cetproFront/src/app/core/services/reniec.service.ts`) hace `GET https://api.apis.net.pe/v2/reniec/dni?numero={dni}` con `Authorization: Bearer {environment.reniecToken}`.
+- **Token:** se configura en `environment.ts` / `environment.prod.ts` (clave `reniecToken`); reemplazar el placeholder `TU_TOKEN_AQUI` por un token real de apis.net.pe.
+- **Disparo:** en `SolicitarComponent` (`solicitar.ts`), el campo `dni` del formulario se escucha con `debounceTime(500)` + `distinctUntilChanged()` + `filter` (solo dispara con 8 dígitos exactos), y llama a `verificarDni()`.
+- **Interceptor:** `authInterceptor` solo agrega el JWT propio a peticiones hacia `environment.apiUrl`; la llamada a RENIEC no lleva ese header, para no pisar el `Authorization` que necesita RENIEC.
+
+**Posible falla por CORS:** la API de RENIEC puede rechazar la petición hecha directo desde el navegador con un error de CORS (`No 'Access-Control-Allow-Origin' header...`), independientemente de si el token es válido — es una restricción del lado del servidor de RENIEC, no del código de este proyecto. Cuando eso ocurre, `catchError` lo captura y la UI cae al estado `no-encontrado`, dejando los campos Nombre/Apellido habilitados para completarlos manualmente. Si se necesita evitar ese error de CORS, la única solución real sería proxear la llamada a través del backend, lo cual queda fuera del alcance actual (se pidió explícitamente consumir RENIEC solo desde el frontend).
+

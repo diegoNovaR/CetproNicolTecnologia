@@ -78,7 +78,10 @@
     "MATRICULA_LABEL": "Enrollment fee",
     "PENSION_LABEL": "tuition",
     "DNI_ERROR": "The National ID must have 8 digits",
-    "TELEFONO_ERROR": "The phone must start with 9 and have 9 digits"
+    "TELEFONO_ERROR": "The phone must start with 9 and have 9 digits",
+    "RENIEC_BUSCANDO": "Verifying National ID...",
+    "RENIEC_VERIFICADO": "Verified:",
+    "RENIEC_NO_ENCONTRADO": "We couldn't verify the National ID, please fill in your details manually"
   },
   "HEADER": {
     "LANGUAGE": "Language",
