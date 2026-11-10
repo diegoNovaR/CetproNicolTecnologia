@@ -61,5 +61,18 @@ Vista pública en `http://localhost:4200/paises` (no requiere login; hay enlace 
 4. **Componente.** `features/paises/paises.ts` usa signals (la app no usa zone.js). Elegir una región dispara la carga mediante un `Subject` + `switchMap` (si se cambia de región antes de que responda la anterior, se descarta esa respuesta) y reinicia país y tabla. El país elegido se busca con un `computed` dentro de la lista ya cargada: la respuesta de la región ya trae los idiomas, así que no hace falta una segunda petición. Si la API falla, `catchError` muestra un mensaje y deja deshabilitada la lista de países.
 5. **Ruta y textos.** Ruta `paises` en `app.routes.ts` (sin `authGuard`) y claves `PAISES.*` en `assets/i18n/{es,en}.json`, así que la vista respeta el idioma guardado. `authInterceptor` no agrega el JWT propio a esta llamada porque solo lo hace hacia `environment.apiUrl`.
 
+**Capturas del flujo asíncrono** (cada cambio de lista dispara una llamada HTTP a la API de países):
+
+1. **Región elegida.** La lista de regiones es estática (no hay llamada todavía).
+   ![Lista de regiones](docs/capturas/02-paises-regiones.png)
+2. **Países cargados.** Al elegir "América" se hizo `GET /region/americas` y el combo País se habilita con la respuesta.
+   ![Países de la región](docs/capturas/03-paises-lista-por-region.png)
+3. **País elegido.** Se muestra la tabla Idioma / Nombre nativo / Código ISO sin una segunda petición (los idiomas ya venían en la respuesta de la región).
+   ![Perú](docs/capturas/04-paises-peru.png)
+4. **País con varios idiomas.** Suiza tiene 4; Romansh no trae nombre nativo y se muestra "—".
+   ![Suiza](docs/capturas/05-paises-suiza-varios-idiomas.png)
+5. **Falla de la API.** `catchError` muestra el mensaje y deja deshabilitado el combo País.
+   ![Error de la API](docs/capturas/06-paises-error-api.png)
+
 **Nota:** al ser un servicio de terceros, si `countries.dev` cambia su formato o deja de estar disponible, el único punto a ajustar es `PaisesService` (y `countriesApiUrl`).
 
