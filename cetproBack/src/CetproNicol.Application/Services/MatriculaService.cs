@@ -3,6 +3,7 @@ using CetproNicol.Application.Exceptions;
 using CetproNicol.Application.Interfaces;
 using CetproNicol.Domain.Entities;
 using CetproNicol.Domain.Enums;
+using Microsoft.Extensions.Logging;
 
 namespace CetproNicol.Application.Services;
 
@@ -13,19 +14,37 @@ public class MatriculaService : IMatriculaService
     private readonly IMatriculaRepository _matriculaRepository;
     private readonly IPagoRepository _pagoRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly INotificador _notificador;
+    private readonly ILogger<MatriculaService> _logger;
 
     public MatriculaService(
         IUsuarioRepository usuarioRepository,
         IPlanEstudioRepository planEstudioRepository,
         IMatriculaRepository matriculaRepository,
         IPagoRepository pagoRepository,
-        IUnitOfWork unitOfWork)
+        IUnitOfWork unitOfWork,
+        INotificador notificador,
+        ILogger<MatriculaService> logger)
     {
         _usuarioRepository = usuarioRepository;
         _planEstudioRepository = planEstudioRepository;
         _matriculaRepository = matriculaRepository;
         _pagoRepository = pagoRepository;
         _unitOfWork = unitOfWork;
+        _notificador = notificador;
+        _logger = logger;
+    }
+
+    private async Task NotificarSinFallarAsync(Func<Task> notificar, string evento)
+    {
+        try
+        {
+            await notificar();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Falló la notificación en tiempo real '{Evento}'; la operación principal no se revierte.", evento);
+        }
     }
 
     public async Task<MatriculaDto> MatricularEstudianteAsync(Guid usuarioId, Guid planEstudioId, CancellationToken cancellationToken = default)
@@ -95,7 +114,13 @@ public class MatriculaService : IMatriculaService
 
             await _unitOfWork.CommitTransactionAsync(cancellationToken);
 
-            return MapToDto(matricula, pagos);
+            var matriculaDto = MapToDto(matricula, pagos);
+            matriculaDto.UsuarioNombreCompleto = $"{usuario.Nombre} {usuario.Apellido}";
+            matriculaDto.CursoNombre = planEstudio.Curso.Nombre;
+
+            await NotificarSinFallarAsync(() => _notificador.NotificarNuevaMatriculaAsync(matriculaDto), "NuevaMatricula");
+
+            return matriculaDto;
         }
         catch
         {
@@ -129,7 +154,15 @@ public class MatriculaService : IMatriculaService
 
             await _unitOfWork.CommitTransactionAsync(cancellationToken);
 
-            return MapToDto(pago);
+            var pagoDto = MapToDto(pago);
+            var estadoMatricula = MapEstadoMatricula(pago.Matricula.Estado);
+            var usuarioId = pago.Matricula.UsuarioId;
+
+            await NotificarSinFallarAsync(
+                () => _notificador.NotificarPagoAprobadoAsync(usuarioId, pagoDto, estadoMatricula),
+                "PagoAprobado");
+
+            return pagoDto;
         }
         catch
         {

@@ -15,6 +15,8 @@ export interface Matricula {
   id: string;
   usuarioId: string;
   planEstudioId: string;
+  usuarioNombreCompleto?: string;
+  cursoNombre?: string;
   estado: EstadoMatricula;
   fechaSolicitud: string;
   fechaAprobacion?: string | null;
@@ -66,4 +68,9 @@ export interface DeudaEstudiante {
 export interface VerificarAcceso {
   tieneAcceso: boolean;
   motivoRechazo?: string | null;
+}
+
+export interface PagoAprobadoEvento {
+  pago: Pago;
+  estadoMatricula: EstadoMatricula;
 }

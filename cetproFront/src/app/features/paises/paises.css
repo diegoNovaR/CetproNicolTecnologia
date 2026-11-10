@@ -1,0 +1,28 @@
+.paises-container {
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.filtros-card {
+  margin-bottom: 16px;
+}
+
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  padding-top: 16px;
+}
+
+.filtro {
+  flex: 1 1 240px;
+}
+
+.bandera {
+  object-fit: cover;
+}
+
+.error-text {
+  color: #b00020;
+}

@@ -8,7 +8,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PagosService } from '../../../core/services/pagos.service';
+import { NotificacionesService } from '../../../core/services/notificaciones.service';
 import { PagoResumen } from '../../../core/models/matricula.models';
 
 @Component({
@@ -29,6 +31,11 @@ import { PagoResumen } from '../../../core/models/matricula.models';
 export class Pagos implements OnInit {
   private readonly pagosService = inject(PagosService);
   private readonly snackBar = inject(MatSnackBar);
+  private readonly notificaciones = inject(NotificacionesService);
+
+  constructor() {
+    this.notificaciones.nuevaMatricula$.pipe(takeUntilDestroyed()).subscribe(() => this.cargar());
+  }
 
   readonly columnas = ['estudiante', 'curso', 'cuota', 'periodo', 'monto', 'estado', 'acciones'];
   readonly cargando = signal(true);

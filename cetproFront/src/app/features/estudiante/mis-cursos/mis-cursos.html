@@ -20,6 +20,14 @@
               <mat-chip [color]="m.estado === 'activa' ? 'primary' : 'accent'" selected>{{ m.estado }}</mat-chip>
             </p>
 
+            @if (deudaDe(m.id); as deuda) {
+              <p>
+                Deuda pendiente:
+                <strong>S/ {{ deuda.totalDeuda }}</strong>
+                ({{ deuda.cuotasPendientes }} cuotas)
+              </p>
+            }
+
             @if (accesoDe(m.id); as acceso) {
               <p>
                 Acceso al contenido:

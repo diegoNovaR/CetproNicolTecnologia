@@ -8,6 +8,10 @@ public class MatriculaDto
 
     public Guid PlanEstudioId { get; set; }
 
+    public string UsuarioNombreCompleto { get; set; } = string.Empty;
+
+    public string CursoNombre { get; set; } = string.Empty;
+
     public string Estado { get; set; } = string.Empty;
 
     public DateTime FechaSolicitud { get; set; }

@@ -1,10 +1,13 @@
 using System.Text;
+using CetproNicol.API.Hubs;
+using CetproNicol.API.Services;
 using CetproNicol.Application.Interfaces;
 using CetproNicol.Application.Services;
 using CetproNicol.Infrastructure.Auth;
 using CetproNicol.Infrastructure.Persistence;
 using CetproNicol.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
@@ -22,9 +25,13 @@ builder.Services.AddCors(options =>
     {
         policy.WithOrigins("http://localhost:4200")
             .AllowAnyHeader()
-            .AllowAnyMethod();
+            .AllowAnyMethod()
+            .AllowCredentials();
     });
 });
+
+builder.Services.AddSignalR();
+builder.Services.AddScoped<INotificador, NotificadorSignalR>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -110,6 +117,24 @@ builder.Services
             ValidAudience = jwtSection["Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSection["Key"]!))
         };
+
+        // Los WebSockets del navegador no pueden enviar el header Authorization,
+        // así que el token del hub viaja en la query string (?access_token=...).
+        
+        //El navegador no puede mandar el header Authorization en un WebSocket, así que el
+        //token llega por la URL y el servidor lo lee
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                var accessToken = context.Request.Query["access_token"];
+
+                if (!string.IsNullOrEmpty(accessToken) && context.HttpContext.Request.Path.StartsWithSegments("/hubs"))
+                    context.Token = accessToken;
+
+                return Task.CompletedTask;
+            }
+        };
     });
 
 builder.Services.AddAuthorization();
@@ -131,5 +156,10 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapHub<NotificacionesHub>("/hubs/notificaciones", options =>
+{
+    options.Transports = HttpTransportType.WebSockets;
+});
 
 app.Run();

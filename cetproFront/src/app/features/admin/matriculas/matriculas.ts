@@ -5,7 +5,9 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatriculasService } from '../../../core/services/matriculas.service';
+import { NotificacionesService } from '../../../core/services/notificaciones.service';
 import { MatriculaResumen } from '../../../core/models/matricula.models';
 
 @Component({
@@ -16,6 +18,11 @@ import { MatriculaResumen } from '../../../core/models/matricula.models';
 })
 export class Matriculas implements OnInit {
   private readonly matriculasService = inject(MatriculasService);
+  private readonly notificaciones = inject(NotificacionesService);
+
+  constructor() {
+    this.notificaciones.nuevaMatricula$.pipe(takeUntilDestroyed()).subscribe(() => this.cargar());
+  }
 
   readonly columnas = ['estudiante', 'curso', 'plan', 'estado', 'fechaSolicitud', 'fechaAprobacion'];
   readonly cargando = signal(true);

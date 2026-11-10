@@ -4,9 +4,17 @@
   <mat-sidenav mode="side" opened class="admin-sidenav">
     <mat-nav-list>
       @for (opcion of opciones; track opcion.ruta) {
-        <a mat-list-item [routerLink]="opcion.ruta" routerLinkActive="activo">
+        <a mat-list-item [routerLink]="opcion.ruta" routerLinkActive="activo" (click)="alNavegar(opcion.ruta)">
           <mat-icon matListItemIcon>{{ opcion.icono }}</mat-icon>
-          <span matListItemTitle>{{ opcion.label }}</span>
+          <span
+            matListItemTitle
+            [matBadge]="badgeDe(opcion.ruta)"
+            [matBadgeHidden]="badgeDe(opcion.ruta) === 0"
+            matBadgeColor="warn"
+            matBadgeOverlap="false"
+            matBadgePosition="after"
+            >{{ opcion.label }}</span
+          >
         </a>
       }
     </mat-nav-list>

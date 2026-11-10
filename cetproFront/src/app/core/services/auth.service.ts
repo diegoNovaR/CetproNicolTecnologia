@@ -4,6 +4,7 @@ import { Observable, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { AuthResponse, LoginRequest, RegistrarRequest, UsuarioActual } from '../models/auth.models';
 import { getRoleFromToken, isTokenExpired } from './jwt.util';
+import { NotificacionesService } from './notificaciones.service';
 
 const TOKEN_KEY = 'cetpro_token';
 const USER_KEY = 'cetpro_usuario';
@@ -17,15 +18,18 @@ export class AuthService {
   readonly usuarioActual = this.usuarioActualSignal.asReadonly();
   readonly estaAutenticado = computed(() => !!this.usuarioActualSignal());
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private notificaciones: NotificacionesService
+  ) {}
 
   login(request: LoginRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.baseUrl}/login`, request).pipe(
       tap((response) => this.guardarSesion(response))
     );
   }
-
-  registrar(request: RegistrarRequest): Observable<AuthResponse> {
+//statefull
+  registrar(request: RegistrarRequest): Observable<AuthResponse> {//guarda la sesion del usuario en el navegador
     return this.http.post<AuthResponse>(`${this.baseUrl}/registrar`, request).pipe(
       tap((response) => this.guardarSesion(response))
     );
@@ -35,6 +39,7 @@ export class AuthService {
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(USER_KEY);
     this.usuarioActualSignal.set(null);
+    void this.notificaciones.detener();
   }
 
   getToken(): string | null {
@@ -65,6 +70,7 @@ export class AuthService {
 
     localStorage.setItem(USER_KEY, JSON.stringify(usuario));
     this.usuarioActualSignal.set(usuario);
+    void this.notificaciones.iniciar();
   }
 
   private leerUsuarioGuardado(): UsuarioActual | null {

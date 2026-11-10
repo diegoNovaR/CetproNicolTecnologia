@@ -35,13 +35,13 @@ export class Registro {
 
   readonly cargando = signal(false);
   readonly errorMensaje = signal<string | null>(null);
-
+     //validaciones 
   readonly form = this.fb.nonNullable.group({
     nombre: ['', Validators.required],
     apellido: ['', Validators.required],
     email: ['', [Validators.required, Validators.email]],
     telefono: [''],
-    password: ['', [Validators.required, Validators.minLength(8)]]
+    password: ['', [Validators.required, Validators.minLength(8)]]//validación de contra
   });
 
   submit(): void {

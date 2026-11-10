@@ -24,3 +24,24 @@
   padding-bottom: 8px;
 }
 
+
+.estado-conexion {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-right: 16px;
+  font-size: 0.8rem;
+  opacity: 0.9;
+}
+
+.estado-conexion .punto {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #9e9e9e;
+}
+
+.estado-conexion.en-vivo .punto {
+  background: #4caf50;
+  box-shadow: 0 0 6px #4caf50;
+}

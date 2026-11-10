@@ -83,9 +83,33 @@
     "RENIEC_VERIFICADO": "Verificado:",
     "RENIEC_NO_ENCONTRADO": "No pudimos verificar el DNI, completa tus datos manualmente"
   },
+  "PAISES": {
+    "TITLE": "Países y lenguas",
+    "EXPLORE": "Explorar países",
+    "BACK": "Volver",
+    "REGION": "Región",
+    "COUNTRY": "País",
+    "LANGUAGE": "Idioma",
+    "NATIVE_NAME": "Nombre nativo",
+    "ISO_CODE": "Código ISO",
+    "COUNTRY_NATIVE_NAME": "Nombre nativo del país",
+    "PICK_REGION": "Selecciona una región para cargar sus países.",
+    "PICK_COUNTRY": "Selecciona un país para ver sus idiomas.",
+    "ERROR": "No se pudo cargar la lista de países. Intenta de nuevo en unos segundos.",
+    "REGIONS": {
+      "AMERICAS": "América",
+      "ASIA": "Asia",
+      "EUROPE": "Europa",
+      "AFRICA": "África",
+      "OCEANIA": "Oceanía",
+      "ANTARCTIC": "Antártida"
+    }
+  },
   "HEADER": {
     "LANGUAGE": "Idioma",
     "SPANISH": "Español",
-    "ENGLISH": "English"
+    "ENGLISH": "English",
+    "LIVE": "En vivo",
+    "DISCONNECTED": "Desconectado"
   }
 }

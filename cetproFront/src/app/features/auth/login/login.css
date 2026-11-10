@@ -21,3 +21,8 @@
   color: #b00020;
   font-size: 0.9rem;
 }
+
+.enlace-paises {
+  display: block;
+  margin-top: 8px;
+}

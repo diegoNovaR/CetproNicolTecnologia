@@ -16,5 +16,6 @@ export const routes: Routes = [
     canActivate: [authGuard],
     data: { rol: 'estudiante' }
   },
+  { path: 'paises', loadComponent: () => import('./features/paises/paises').then((m) => m.Paises) },
   { path: '**', redirectTo: 'login' }
 ];

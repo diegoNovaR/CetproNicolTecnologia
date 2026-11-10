@@ -1,4 +1,5 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
@@ -9,7 +10,13 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuthService } from '../../../core/services/auth.service';
 import { MatriculasService } from '../../../core/services/matriculas.service';
 import { ContenidoService } from '../../../core/services/contenido.service';
-import { MatriculaResumen, VerificarAcceso } from '../../../core/models/matricula.models';
+import { NotificacionesService } from '../../../core/services/notificaciones.service';
+import {
+  DeudaEstudiante,
+  MatriculaResumen,
+  PagoAprobadoEvento,
+  VerificarAcceso
+} from '../../../core/models/matricula.models';
 import { DeudaDialog } from './deuda-dialog/deuda-dialog';
 
 @Component({
@@ -23,6 +30,7 @@ export class MisCursos implements OnInit {
   private readonly authService = inject(AuthService);
   private readonly matriculasService = inject(MatriculasService);
   private readonly contenidoService = inject(ContenidoService);
+  private readonly notificaciones = inject(NotificacionesService);
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
 
@@ -30,6 +38,13 @@ export class MisCursos implements OnInit {
   readonly matriculas = signal<MatriculaResumen[]>([]);
   readonly verificandoId = signal<string | null>(null);
   readonly resultadosAcceso = signal<Record<string, VerificarAcceso>>({});
+  readonly deudas = signal<Record<string, DeudaEstudiante>>({});
+
+  constructor() {
+    this.notificaciones.pagoAprobado$
+      .pipe(takeUntilDestroyed())
+      .subscribe((evento) => this.alAprobarsePago(evento));
+  }
 
   ngOnInit(): void {
     const usuarioId = this.authService.usuarioActual()?.usuarioId;
@@ -39,8 +54,32 @@ export class MisCursos implements OnInit {
       next: (data) => {
         this.matriculas.set(data);
         this.cargando.set(false);
+        data.forEach((m) => this.refrescarDeuda(m.id));
       },
       error: () => this.cargando.set(false)
+    });
+  }
+
+  private alAprobarsePago(evento: PagoAprobadoEvento): void {
+    const { pago, estadoMatricula } = evento;
+
+    this.snackBar.open(`Tu pago de ${pago.periodo} fue aprobado`, 'Cerrar', { duration: 6000 });
+
+    this.matriculas.update((lista) =>
+      lista.map((m) => (m.id === pago.matriculaId ? { ...m, estado: estadoMatricula } : m))
+    );
+
+    // El estado de acceso pudo cambiar con este pago: se descarta el resultado viejo.
+    const { [pago.matriculaId]: _descartado, ...restoAccesos } = this.resultadosAcceso();
+    this.resultadosAcceso.set(restoAccesos);
+
+    this.refrescarDeuda(pago.matriculaId);
+  }
+
+  private refrescarDeuda(matriculaId: string): void {
+    this.matriculasService.calcularDeuda(matriculaId).subscribe({
+      next: (deuda) => this.deudas.set({ ...this.deudas(), [matriculaId]: deuda }),
+      error: () => undefined
     });
   }
 
@@ -71,5 +110,9 @@ export class MisCursos implements OnInit {
 
   accesoDe(matriculaId: string): VerificarAcceso | undefined {
     return this.resultadosAcceso()[matriculaId];
+  }
+
+  deudaDe(matriculaId: string): DeudaEstudiante | undefined {
+    return this.deudas()[matriculaId];
   }
 }

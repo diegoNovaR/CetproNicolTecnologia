@@ -1,0 +1,82 @@
+<mat-toolbar color="primary">
+  <button mat-icon-button (click)="volver()" [attr.aria-label]="'PAISES.BACK' | translate">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <span>{{ 'PAISES.TITLE' | translate }}</span>
+</mat-toolbar>
+
+<div class="page-container paises-container">
+  <mat-card class="filtros-card">
+    <mat-card-content class="filtros">
+      <mat-form-field appearance="outline" class="filtro">
+        <mat-label>{{ 'PAISES.REGION' | translate }}</mat-label>
+        <mat-select [value]="regionSeleccionada()" (selectionChange)="alCambiarRegion($event.value)">
+          @for (region of regiones; track region.valor) {
+            <mat-option [value]="region.valor">{{ region.clave | translate }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filtro">
+        <mat-label>{{ 'PAISES.COUNTRY' | translate }}</mat-label>
+        <mat-select
+          [value]="codigoPais()"
+          (selectionChange)="alCambiarPais($event.value)"
+          [disabled]="!regionSeleccionada() || cargando() || paises().length === 0"
+        >
+          @for (pais of paises(); track pais.alpha3Code) {
+            <mat-option [value]="pais.alpha3Code">{{ pais.name }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      @if (cargando()) {
+        <mat-spinner diameter="24"></mat-spinner>
+      }
+    </mat-card-content>
+  </mat-card>
+
+  @if (error()) {
+    <p class="error-text">{{ 'PAISES.ERROR' | translate }}</p>
+  }
+
+  @if (paisSeleccionado(); as pais) {
+    <mat-card class="resultado-card">
+      <mat-card-header>
+        @if (pais.flags?.svg; as bandera) {
+          <img mat-card-avatar class="bandera" [src]="bandera" [alt]="pais.name" />
+        }
+        <mat-card-title>{{ pais.name }}</mat-card-title>
+        <mat-card-subtitle>
+          {{ 'PAISES.COUNTRY_NATIVE_NAME' | translate }}: <strong>{{ pais.nativeName || pais.name }}</strong>
+        </mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <table mat-table [dataSource]="pais.languages" class="full-width">
+          <ng-container matColumnDef="idioma">
+            <th mat-header-cell *matHeaderCellDef>{{ 'PAISES.LANGUAGE' | translate }}</th>
+            <td mat-cell *matCellDef="let idioma">{{ idioma.name }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="nombreNativo">
+            <th mat-header-cell *matHeaderCellDef>{{ 'PAISES.NATIVE_NAME' | translate }}</th>
+            <td mat-cell *matCellDef="let idioma">{{ idioma.nativeName || '—' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="codigo">
+            <th mat-header-cell *matHeaderCellDef>{{ 'PAISES.ISO_CODE' | translate }}</th>
+            <td mat-cell *matCellDef="let idioma">{{ idioma.iso639_1 || idioma.iso639_2 || '—' }}</td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+          <tr mat-row *matRowDef="let row; columns: columnas"></tr>
+        </table>
+      </mat-card-content>
+    </mat-card>
+  } @else if (!cargando() && !error()) {
+    <p class="empty-text">
+      {{ (regionSeleccionada() ? 'PAISES.PICK_COUNTRY' : 'PAISES.PICK_REGION') | translate }}
+    </p>
+  }
+</div>

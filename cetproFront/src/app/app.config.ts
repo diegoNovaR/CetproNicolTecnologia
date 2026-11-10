@@ -2,7 +2,7 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
-import { provideTranslateService } from '@ngx-translate/core';
+import { provideTranslateService } from '@ngx-translate/core';//interna... carga el idioma
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { IDIOMA_GUARDADO_KEY } from './core/services/idioma.util';
@@ -14,7 +14,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideAnimations(),
     provideHttpClient(withInterceptors([authInterceptor])),
-    provideTranslateService({
+    provideTranslateService({//función para el cambio de idioma.
       loader: provideTranslateHttpLoader({ prefix: '/assets/i18n/', suffix: '.json' }),
       lang: localStorage.getItem(IDIOMA_GUARDADO_KEY) ?? 'es',
       fallbackLang: 'es'

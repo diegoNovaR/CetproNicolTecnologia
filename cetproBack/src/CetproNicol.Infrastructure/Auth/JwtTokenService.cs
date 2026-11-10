@@ -16,7 +16,7 @@ public class JwtTokenService : ITokenService
         _settings = options.Value;
     }
 
-    public string GenerateToken(Guid usuarioId, string email, string rol)
+    public string GenerateToken(Guid usuarioId, string email, string rol)//crea tokens stateles
     {
         var claims = new[]
         {

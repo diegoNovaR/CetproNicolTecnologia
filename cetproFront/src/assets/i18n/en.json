@@ -83,9 +83,33 @@
     "RENIEC_VERIFICADO": "Verified:",
     "RENIEC_NO_ENCONTRADO": "We couldn't verify the National ID, please fill in your details manually"
   },
+  "PAISES": {
+    "TITLE": "Countries and languages",
+    "EXPLORE": "Explore countries",
+    "BACK": "Back",
+    "REGION": "Region",
+    "COUNTRY": "Country",
+    "LANGUAGE": "Language",
+    "NATIVE_NAME": "Native name",
+    "ISO_CODE": "ISO code",
+    "COUNTRY_NATIVE_NAME": "Country native name",
+    "PICK_REGION": "Select a region to load its countries.",
+    "PICK_COUNTRY": "Select a country to see its languages.",
+    "ERROR": "The country list could not be loaded. Please try again in a few seconds.",
+    "REGIONS": {
+      "AMERICAS": "Americas",
+      "ASIA": "Asia",
+      "EUROPE": "Europe",
+      "AFRICA": "Africa",
+      "OCEANIA": "Oceania",
+      "ANTARCTIC": "Antarctica"
+    }
+  },
   "HEADER": {
     "LANGUAGE": "Language",
     "SPANISH": "Español",
-    "ENGLISH": "English"
+    "ENGLISH": "English",
+    "LIVE": "Live",
+    "DISCONNECTED": "Disconnected"
   }
 }

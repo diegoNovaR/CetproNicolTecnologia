@@ -10,6 +10,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../core/services/auth.service';
 import { IDIOMA_GUARDADO_KEY, IdiomaDisponible } from '../../core/services/idioma.util';
+import { NotificacionesService } from '../../core/services/notificaciones.service';
 
 @Component({
   selector: 'app-header',
@@ -31,8 +32,15 @@ export class Header {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
   private readonly translateService = inject(TranslateService);
+  private readonly notificaciones = inject(NotificacionesService);
 
   readonly usuario = this.authService.usuarioActual;
+  readonly enVivo = this.notificaciones.conectado;
+
+  constructor() {
+    // Idempotente: reconecta al recargar la página con una sesión ya guardada.
+    void this.notificaciones.iniciar();
+  }
 
   get idiomaActual(): IdiomaDisponible {
     return (this.translateService.currentLang() as IdiomaDisponible) ?? 'es';
