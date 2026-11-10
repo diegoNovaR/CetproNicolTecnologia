@@ -1,6 +1,8 @@
 using CetproNicol.Application.DTOs;
 using CetproNicol.Application.Exceptions;
 using CetproNicol.Application.Interfaces;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CetproNicol.API.Controllers;
@@ -9,6 +11,7 @@ namespace CetproNicol.API.Controllers;
 /// Matriculación de estudiantes, aprobación de pagos y consulta de deuda.
 /// </summary>
 [ApiController]
+[Authorize]
 public class MatriculasController : ControllerBase
 {
     private readonly IMatriculaService _matriculaService;
@@ -17,6 +20,11 @@ public class MatriculasController : ControllerBase
     {
         _matriculaService = matriculaService;
     }
+
+    private bool EsAdmin => User.IsInRole("admin");
+
+    private Guid? UsuarioActualId =>
+        Guid.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var id) ? id : null;
 
     /// <summary>
     /// Matricula a un estudiante en un plan de estudio: crea la matrícula en estado "pendiente"
@@ -29,9 +37,14 @@ public class MatriculasController : ControllerBase
     [HttpPost("/api/matriculas")]
     [ProducesResponseType(typeof(MatriculaDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> MatricularEstudiante([FromBody] MatricularEstudianteRequest request, CancellationToken cancellationToken)
     {
+        // Un estudiante solo puede matricularse a sí mismo; el admin puede matricular a cualquiera.
+        if (!EsAdmin && request.UsuarioId != UsuarioActualId) return Forbid();
+
         try
         {
             var matricula = await _matriculaService.MatricularEstudianteAsync(request.UsuarioId, request.PlanEstudioId, cancellationToken);
@@ -54,8 +67,11 @@ public class MatriculasController : ControllerBase
     /// <param name="id">Id del pago a aprobar.</param>
     /// <response code="200">Pago aprobado.</response>
     /// <response code="400">El pago no está en estado "pendiente".</response>
+    /// <response code="401">Falta el token o es inválido.</response>
+    /// <response code="403">El usuario no es admin.</response>
     /// <response code="404">El pago no existe.</response>
     [HttpPut("/api/pagos/{id:guid}/aprobar")]
+    [Authorize(Roles = "admin")]
     [ProducesResponseType(typeof(PagoDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -81,12 +97,16 @@ public class MatriculasController : ControllerBase
     [ProducesResponseType(typeof(List<MatriculaResumenDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetMatriculas([FromQuery] Guid? usuarioId, CancellationToken cancellationToken)
     {
+        // Un estudiante solo ve sus propias matrículas (se ignora el filtro enviado).
+        if (!EsAdmin) usuarioId = UsuarioActualId;
+
         var matriculas = await _matriculaService.GetMatriculasAsync(usuarioId, cancellationToken);
         return Ok(matriculas);
     }
 
     /// <summary>Lista pagos con datos de estudiante y curso. Si se envía <paramref name="estado"/> ("pendiente" o "aprobado"), filtra por ese estado.</summary>
     [HttpGet("/api/pagos")]
+    [Authorize(Roles = "admin")]
     [ProducesResponseType(typeof(List<PagoResumenDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetPagos([FromQuery] string? estado, CancellationToken cancellationToken)
@@ -108,9 +128,17 @@ public class MatriculasController : ControllerBase
     /// <response code="404">La matrícula no existe.</response>
     [HttpGet("/api/matriculas/{id:guid}/deuda")]
     [ProducesResponseType(typeof(DeudaEstudianteDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> CalcularDeuda(Guid id, CancellationToken cancellationToken)
     {
+        // Un estudiante solo puede consultar la deuda de sus propias matrículas.
+        if (!EsAdmin)
+        {
+            var propias = await _matriculaService.GetMatriculasAsync(UsuarioActualId, cancellationToken);
+            if (!propias.Any(m => m.Id == id)) return Forbid();
+        }
+
         try
         {
             var deuda = await _matriculaService.CalcularDeudaEstudianteAsync(id, cancellationToken);

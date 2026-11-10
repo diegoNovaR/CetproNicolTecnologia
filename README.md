@@ -23,6 +23,36 @@ Queda en `http://localhost:4200`.
 **3. Probarlo**
 Usuario admin semilla: `admin@cetpronicol.com` / `Admin123!`. También puedes registrar un estudiante nuevo desde `/registro`. El connection string de Supabase usa el puerto 5432 (session pooler); si necesitas correr una migración nueva, usa ese puerto y no el 6543 (transaction pooler, no soporta bien las migraciones de EF Core).
 
+## Autenticación JWT en los servicios
+
+- **Login / registro:** `POST /api/auth/login` y `POST /api/auth/registrar` (públicos) devuelven un token JWT (HS256, claims: id, email, rol). Contraseñas con BCrypt. En Swagger, botón **Authorize** → pegar el token.
+- **Cliente:** el frontend guarda el token y el interceptor envía `Authorization: Bearer <token>` solo a nuestra API.
+- **Reglas por endpoint** (`[Authorize]` en los controladores):
+
+| Endpoint | Sin token | Estudiante | Admin |
+|---|---|---|---|
+| `GET /api/areas`, `/cursos`, `/planes` y `POST /api/consultas` | 200 (públicos) | 200 | 200 |
+| `POST/PUT/DELETE` de áreas, cursos y planes | 401 | 403 | 200 |
+| `GET /api/dashboard` | 401 | 403 | 200 |
+| `PUT /api/pagos/{id}/aprobar` y `GET /api/pagos` | 401 | 403 | 200 |
+| `POST /api/matriculas` | 401 | solo para sí mismo (otro → 403) | cualquiera |
+| `GET /api/matriculas` | 401 | solo las propias (se ignora el filtro) | todas |
+| `GET /api/matriculas/{id}/deuda` | 401 | solo de sus matrículas (ajena → 403) | cualquiera |
+| `GET /api/contenidos/verificar-acceso` | 401 | solo con su `usuarioId` (otro → 403) | cualquiera |
+
+**Lado frontend (Angular):**
+- `AuthService` (`core/services/auth.service.ts`): `login()` / `registrar()` guardan el token y el usuario en `localStorage`; `logout()` los borra y corta la conexión SignalR.
+- `authInterceptor` (`core/interceptors/auth.interceptor.ts`): agrega `Authorization: Bearer <token>` solo a las peticiones a nuestra API y maneja las respuestas de error:
+  - **401** (token vencido, alterado o rechazado) en cualquier endpoint que no sea `/auth/*`: cierra la sesión, avisa "Tu sesión expiró..." y vuelve a `/login`. Un 401 de `/auth/login` (credenciales malas) **no** hace esto: lo muestra el propio formulario.
+  - **403** (sesión válida pero sin permiso): avisa "No tienes permiso..." y deja al usuario donde está.
+- `authGuard` (`core/guards/auth.guard.ts`): sin token válido o vencido → `/login`. Con rol equivocado (estudiante en `/admin` o admin en `/estudiante`) → lo devuelve a su propia zona sin cerrar sesión.
+- Los textos de los avisos están en `AUTH.SESSION_EXPIRED` y `AUTH.FORBIDDEN` (`assets/i18n/{es,en}.json`).
+- Nota: el guard solo mejora la experiencia; la seguridad real es la de la API (tabla de arriba), porque el guard del frontend se puede saltar.
+
+**Pruebas hechas en el navegador:** estudiante entrando a `/admin` → vuelve a `/estudiante`; token con la firma alterada → 401 de la API, sesión cerrada y aviso en el login; contraseña incorrecta → se queda en el login con "Credenciales inválidas" sin aviso de sesión; admin entra a Dashboard, Pagos, Matrículas y Áreas (200); estudiante ve sus cursos (`/api/matriculas?usuarioId=...` → 200).
+
+El id del usuario se toma del claim `NameIdentifier` del token (`MatriculasController`, `ContenidosController`), no de lo que envíe el cliente. Estas reglas se verificaron contra la API en ejecución (401 sin token, 403 con token de estudiante en rutas de admin o datos ajenos, 200 con admin).
+
 ## Dónde están las funciones stateless / stateful / i18n
 
 **Stateful (modifican datos, con transacción):**

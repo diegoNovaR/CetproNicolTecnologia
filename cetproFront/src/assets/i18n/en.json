@@ -57,7 +57,9 @@
     "ACCOUNT_CREATED": "Account created successfully",
     "LOGIN_ERROR": "Invalid credentials.",
     "REGISTRO_ERROR": "Could not complete the registration.",
-    "CLOSE": "Close"
+    "CLOSE": "Close",
+    "SESSION_EXPIRED": "Your session expired or is not valid. Please sign in again.",
+    "FORBIDDEN": "You don't have permission to perform this action."
   },
   "SOLICITAR": {
     "TITLE": "Request enrollment",

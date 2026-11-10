@@ -11,9 +11,11 @@ export const authGuard: CanActivateFn = (route) => {
     return router.createUrlTree(['/login']);
   }
 
+  const rolActual = authService.getRolDesdeToken();
   const rolRequerido = route.data['rol'] as string | undefined;
-  if (rolRequerido && authService.getRolDesdeToken() !== rolRequerido) {
-    return router.createUrlTree(['/login']);
+  if (rolRequerido && rolActual !== rolRequerido) {
+    // Sesión válida pero rol equivocado: se devuelve a su propia zona en vez de cerrar sesión.
+    return router.createUrlTree([rolActual === 'admin' ? '/admin' : '/estudiante']);
   }
 
   return true;

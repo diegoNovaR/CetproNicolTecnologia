@@ -1,5 +1,7 @@
 using CetproNicol.Application.DTOs;
 using CetproNicol.Application.Interfaces;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CetproNicol.API.Controllers;
@@ -8,6 +10,7 @@ namespace CetproNicol.API.Controllers;
 /// Verificación de acceso a contenido de curso según el estado de matrícula y pagos del estudiante.
 /// </summary>
 [ApiController]
+[Authorize]
 public class ContenidosController : ControllerBase
 {
     private readonly IContenidoService _contenidoService;
@@ -29,8 +32,14 @@ public class ContenidosController : ControllerBase
     /// </response>
     [HttpGet("/api/contenidos/verificar-acceso")]
     [ProducesResponseType(typeof(VerificarAccesoDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> VerificarAcceso([FromQuery] Guid usuarioId, [FromQuery] Guid cursoId, CancellationToken cancellationToken)
     {
+        // Un estudiante solo puede verificar su propio acceso.
+        var actual = Guid.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var id) ? id : (Guid?)null;
+        if (!User.IsInRole("admin") && usuarioId != actual) return Forbid();
+
         var resultado = await _contenidoService.VerificarAccesoContenidoAsync(usuarioId, cursoId, cancellationToken);
         return Ok(resultado);
     }

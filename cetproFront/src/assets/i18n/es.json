@@ -57,7 +57,9 @@
     "ACCOUNT_CREATED": "Cuenta creada correctamente",
     "LOGIN_ERROR": "Credenciales inválidas.",
     "REGISTRO_ERROR": "No se pudo completar el registro.",
-    "CLOSE": "Cerrar"
+    "CLOSE": "Cerrar",
+    "SESSION_EXPIRED": "Tu sesión expiró o no es válida. Inicia sesión nuevamente.",
+    "FORBIDDEN": "No tienes permiso para realizar esta acción."
   },
   "SOLICITAR": {
     "TITLE": "Solicitar matrícula",
